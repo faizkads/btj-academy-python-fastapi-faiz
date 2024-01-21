@@ -141,8 +141,6 @@ async def update(
     update_note: UpdateNote = Depends(UpdateNote)
 ) -> UpdateNoteResponse :
     try:
-        print(token_user_id, note_id)
-        print(data)
         resp_data = await update_note.execute(user_id=token_user_id, note_id=note_id, request=data)
         
         print(resp_data)

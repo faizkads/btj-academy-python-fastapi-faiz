@@ -118,7 +118,20 @@ class UpdateNote:
             note = note.scalars().first()
             if not note:
                     raise HTTPException(status_code=404)
-            
+
+            title_modified = note.title != request.title
+            if title_modified:
+                n = await session.execute(
+                    select(Note).where(
+                        (Note.created_by == user_id) & (Note.title == request.title) & (Note.deleted_at == None)
+                    )
+                )
+                n = n.scalars().first()
+                if n:
+                    raise HTTPException(
+                            400, f"title: {request.title} is already taken"
+                        )
+
             note.title = request.title
             note.content = request.content
             note.updated_at = datetime.datetime.utcnow()
